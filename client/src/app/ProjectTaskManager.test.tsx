@@ -68,4 +68,28 @@ describe("ProjectTaskManager", () => {
     expect(await screen.findByText("Task One project 1")).toBeInTheDocument();
     expect(screen.getByText("Task Two project 1")).toBeInTheDocument();
   });
+
+  it("handles presentation style changes", async () => {
+    render(
+      <MockedProvider mocks={mocks} addTypename={false}>
+        <ProjectTaskManager />
+      </MockedProvider>
+    );
+
+    expect(await screen.findByText("Project One")).toBeInTheDocument();
+    expect(screen.getByText("Project Two")).toBeInTheDocument();
+
+    fireEvent.change(screen.getByRole("combobox"), { target: { value: "1" } });
+
+    expect(await screen.findByText("Task One project 1")).toBeInTheDocument();
+
+    const listButton = screen.getByRole("button", { name: /list view/i });
+    fireEvent.click(listButton);
+
+    expect(localStorage.getItem("presentationStyle")).toBe("list");
+
+    const gridButton = screen.getByRole("button", { name: /grid view/i });
+    fireEvent.click(gridButton);
+    expect(localStorage.getItem("presentationStyle")).toBe("grid");
+  });
 });
