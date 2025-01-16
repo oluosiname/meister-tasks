@@ -7,6 +7,10 @@ RSpec.describe TaskCreator, type: :service do
     subject { described_class.call(project:) }
 
     context 'when task creation is successful' do
+      before do
+        allow(MeisterTasksSchema.subscriptions).to receive(:trigger)
+      end
+
       it 'returns a success result' do
         result = subject
         expect(result.success).to be true

@@ -5,11 +5,7 @@ class TaskCreatorJob
     Project.find_each do |project|
       result = TaskCreator.call(project:)
 
-      if result.success
-        puts "Task created: #{result.task.name}"
-      else
-        puts "Task not created: #{result.errors.join(", ")}"
-      end
+      Rails.logger.error("Task not created: #{result.errors.join(', ')}") unless result.success
     end
   end
 end
