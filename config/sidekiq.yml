@@ -1,0 +1,5 @@
+:scheduler:
+  :schedule:
+    create_task:
+      every: 2 minutes
+      class: TaskCreatorJob
