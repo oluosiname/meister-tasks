@@ -1,0 +1,60 @@
+#!/bin/bash
+
+set -e
+
+# Backend setup
+echo "Setting up the Rails backend..."
+
+echo "== Installing dependencies =="
+gem install bundler --conservative
+
+bundle check || bundle install
+
+bin/rails db:prepare
+
+rails db:seed
+
+# Start Rails server, Sidekiq, and frontend in foreground
+echo "Starting Rails server, Sidekiq, and React frontend in foreground..."
+
+# Function to handle cleanup on Ctrl+C
+cleanup() {
+  echo "Stopping all servers..."
+  kill 0
+}
+
+# Trap Ctrl+C and call cleanup
+trap cleanup INT
+
+# Start processes in parallel
+(
+  echo "Starting Rails server..."
+  rails s
+) &
+
+(
+  echo "Starting Sidekiq..."
+  bundle exec sidekiq
+) &
+
+(
+  echo "Setting up the React frontend..."
+  cd client
+
+  if [ ! -d "node_modules" ]; then
+    echo "Installing frontend dependencies..."
+    npm install
+  else
+    echo "Frontend dependencies already installed. Skipping installation..."
+  fi
+
+  echo "Starting React frontend..."
+  npm run dev
+) &
+
+(
+  cd ..
+)
+
+# Wait for all processes to finish
+wait
