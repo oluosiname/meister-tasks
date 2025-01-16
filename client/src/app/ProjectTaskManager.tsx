@@ -10,6 +10,8 @@ import { Project, Task } from "@/types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faGrip } from "@fortawesome/free-solid-svg-icons";
 
+import { useTaskSubscription } from "@/hooks/useTaskSubscription";
+
 const ProjectTaskManager: React.FC = () => {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(
     null
@@ -43,6 +45,8 @@ const ProjectTaskManager: React.FC = () => {
   useEffect(() => {
     localStorage.setItem("presentationStyle", presentationStyle);
   }, [presentationStyle]);
+
+  useTaskSubscription(selectedProjectId);
 
   return (
     <div className="flex flex-col h-full">

@@ -14,6 +14,7 @@ class TaskCreator
 
     if task.persisted?
       TaskCreationResult.new(success: true, task: task, errors: [])
+      MeisterTasksSchema.subscriptions.trigger(:task_added, { project_id: task.project_id }, task)
     else
       TaskCreationResult.new(success: false, task: nil, errors: task.errors.full_messages)
     end

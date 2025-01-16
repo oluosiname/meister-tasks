@@ -17,3 +17,13 @@ export const GET_PROJECTS = gql`
     }
   }
 `;
+
+export const TASK_ADDED = gql`
+  subscription OnTaskAdded($projectId: ID!) {
+    taskAdded(projectId: $projectId) {
+      id
+      name
+      projectId
+    }
+  }
+`;
